@@ -1,6 +1,6 @@
 /*:
  * @plugindesc A crafting system for RPG Maker MV that reads crafting recipes from the note fields of items, weapons, and armor.
- * @author Yikai_Liu
+ * @author ChatGPT
  *
  * @param Craft Menu Name
  * @desc The name of the crafting menu item.
@@ -16,18 +16,20 @@
  *   Result: [Item|Weapon|Armor] ID
  *   Material1: [Item|Weapon|Armor] ID, Quantity
  *   Material2: [Item|Weapon|Armor] ID, Quantity
- *   description: [string]
+ *   Description: String
  *   Requirement: Item ID
+ *   Cost: Quantity
  * </recipe>
  *
  * Example:
- * <recipe>
- *   Result: Weapon 1
- *   Material1: Item 2, 3
- *   Material2: Item 3, 2
- *   description: This is a descrpition 
- *   Requirement: Item 7
- * </recipe>
+ <recipe>
+*Result: Item 1
+*Material1: Item 8, 1
+*Material2: Item 9, 1
+*Description: Potion to heal
+*Requirement: Item 7
+*Cost:50
+</recipe>
  */(function() {
     var parameters = PluginManager.parameters('CraftingSystem');
     var craftMenuName = String(parameters['Craft Menu Name'] || 'Craft');
@@ -131,7 +133,9 @@
                 return false;
             }
         }
-    
+        if (recipe.cost > 0 && $gameParty.gold() < recipe.cost) {
+            return false;
+        }
         return true;
     };
     
@@ -148,6 +152,9 @@
         }
         var resultItem = this.getItem(recipe.result.type, recipe.result.id);
         $gameParty.gainItem(resultItem, 1);
+        if (recipe.cost > 0) {
+            $gameParty.loseGold(recipe.cost);
+        }
         SoundManager.playShop();
     };
 
@@ -301,7 +308,7 @@
 
     Window_CraftList.prototype.parseRecipe = function(note) {
         var recipe = null;
-        var regex = /<recipe>\s*Result:\s*(Item|Weapon|Armor)\s*(\d+)\s*[\s\S]*?Material1:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Material2:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Description:\s*(.*?)\s*(?:Requirement:\s*(Item|Weapon|Armor)\s*(\d+))?\s*<\/recipe>/i;
+        var regex = /<recipe>\s*Result:\s*(Item|Weapon|Armor)\s*(\d+)\s*[\s\S]*?Material1:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Material2:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Description:\s*(.*?)\s*(?:Requirement:\s*(Item|Weapon|Armor)\s*(\d+))?\s*(?:Cost:\s*(\d+))?\s*<\/recipe>/i;
         var match = regex.exec(note);
     
         if (match) {
@@ -312,7 +319,8 @@
                     { type: match[6], id: Number(match[7]), quantity: Number(match[8]) }
                 ],
                 description: match[9] || "",  // Handle missing description
-                requirement: match[10] ? { type: match[10], id: Number(match[11]) } : null // Handle optional requirement
+                requirement: match[10] ? { type: match[10], id: Number(match[11]) } : null, // Handle optional requirement
+                cost: match[12] ? Number(match[12]) : 0 // Handle optional cost
             };
         }
     
@@ -431,7 +439,10 @@ Window_CraftList.prototype.itemRect = function(index) {
     
             this.drawText(this._recipe.description, 0, y, this.contents.width);
             y += lineHeight + 1;
-    
+            if (this._recipe.cost > 0) {
+                this.drawText(`Cost: ${this._recipe.cost} Fairy Mass`, 0, y, this.contents.width);
+                y += lineHeight;
+            }
             // Draw materials
             this.drawText("Materials:", 0, y, this.contents.width);
             y += lineHeight;
@@ -446,7 +457,7 @@ Window_CraftList.prototype.itemRect = function(index) {
                 this.drawText(`  Material ${i + 1}: ${materialItem} x${material.quantity}`, 24, y, this.contents.width - 24);
                 y += lineHeight;
             }, this);
-    
+           
             // Draw requirement
             if (this._recipe.requirement) {
                 var reqItemName = this.getItemName(this._recipe.requirement.type, this._recipe.requirement.id);

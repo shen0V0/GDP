@@ -1,6 +1,6 @@
 [
 null,
-{"id":1,"expanded":true,"name":"家","order":1,"parentId":0,"scrollX":1092,"scrollY":597.3333333333334},
-{"id":2,"expanded":true,"name":"出生点","order":2,"parentId":1,"scrollX":1081.3333333333333,"scrollY":586.6666666666666},
-{"id":3,"expanded":false,"name":"小红帽家","order":3,"parentId":2,"scrollX":1081.3333333333333,"scrollY":586.6666666666666}
+{"id":1,"expanded":true,"name":"家","order":1,"parentId":0,"scrollX":1638,"scrollY":896},
+{"id":2,"expanded":true,"name":"出生点","order":2,"parentId":1,"scrollX":1622,"scrollY":880},
+{"id":3,"expanded":true,"name":"小红帽家","order":3,"parentId":2,"scrollX":1622,"scrollY":1264}
 ]
