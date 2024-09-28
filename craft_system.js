@@ -471,7 +471,6 @@ Window_CraftList.prototype.itemRect = function(index) {
         return item ? item.name : "Unknown Item";
     };
 
-    // Add the crafting scene to the main menu
     var _Scene_Menu_createCommandWindow = Scene_Menu.prototype.createCommandWindow;
     Scene_Menu.prototype.createCommandWindow = function() {
         _Scene_Menu_createCommandWindow.call(this);
