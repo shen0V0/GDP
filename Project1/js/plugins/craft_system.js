@@ -31,6 +31,7 @@
 *Cost:50
 </recipe>
  */(function() {
+    window.Scene_Craft = Scene_Craft;
     var parameters = PluginManager.parameters('CraftingSystem');
     var craftMenuName = String(parameters['Craft Menu Name'] || 'Craft');
 
