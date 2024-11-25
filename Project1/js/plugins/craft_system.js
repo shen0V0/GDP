@@ -314,14 +314,17 @@ Scene_Craft.prototype.onCraftOk = function() {
         var recipes = [];
         $dataItems.concat($dataWeapons, $dataArmors).forEach(function(item) {
             if (item && item.note) {
-                var recipe = this.parseRecipe(item.note);
-                if (recipe && this.canDisplayRecipe(recipe)) {
-                    recipes.push(recipe);
-                }
+                var itemRecipes = this.parseRecipes(item.note);
+                itemRecipes.forEach(function(recipe) {
+                    if (this.canDisplayRecipe(recipe)) {
+                        recipes.push(recipe);
+                    }
+                }, this);
             }
         }, this);
         return recipes;
     };
+    
     Window_CraftList.prototype.canDisplayRecipe = function(recipe) {
         if (recipe.requirement) {
             var requiredItem = this.getItemById(recipe.requirement.type, recipe.requirement.id);
@@ -345,14 +348,13 @@ Scene_Craft.prototype.onCraftOk = function() {
         return null;
     };
     
-
-    Window_CraftList.prototype.parseRecipe = function(note) {
-        var recipe = null;
-        var regex = /<recipe>\s*Result:\s*(Item|Weapon|Armor)\s*(\d+)\s*[\s\S]*?Material1:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Material2:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Description:\s*(.*?)\s*(?:Requirement:\s*(Item|Weapon|Armor)\s*(\d+))?\s*(?:Cost:\s*(\d+))?\s*<\/recipe>/i;
-        var match = regex.exec(note);
-    
-        if (match) {
-            recipe = {
+    Window_CraftList.prototype.parseRecipes = function(note) {
+        var recipes = [];
+        var regex = /<recipe>\s*Result:\s*(Item|Weapon|Armor)\s*(\d+)\s*[\s\S]*?Material1:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Material2:\s*(Item|Weapon|Armor)\s*(\d+),\s*(\d+)\s*[\s\S]*?Description:\s*(.*?)\s*(?:Requirement:\s*(Item|Weapon|Armor)\s*(\d+))?\s*(?:Cost:\s*(\d+))?\s*<\/recipe>/ig;
+        var match;
+        
+        while ((match = regex.exec(note)) !== null) {
+            var recipe = {
                 result: { type: match[1], id: Number(match[2]) },
                 materials: [
                     { type: match[3], id: Number(match[4]), quantity: Number(match[5]) },
@@ -362,9 +364,10 @@ Scene_Craft.prototype.onCraftOk = function() {
                 requirement: match[10] ? { type: match[10], id: Number(match[11]) } : null, // Handle optional requirement
                 cost: match[12] ? Number(match[12]) : 0 // Handle optional cost
             };
+            recipes.push(recipe);
         }
     
-        return recipe;
+        return recipes;
     };
     
 
