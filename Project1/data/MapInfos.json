@@ -39,5 +39,7 @@ null,
 {"id":37,"expanded":false,"name":"黑-骑士","order":37,"parentId":23,"scrollX":816,"scrollY":656},
 {"id":38,"expanded":false,"name":"黑-后","order":38,"parentId":23,"scrollX":816,"scrollY":656},
 {"id":39,"expanded":false,"name":"黑-王","order":39,"parentId":23,"scrollX":1081.3333333333333,"scrollY":656},
-{"id":40,"expanded":true,"name":"黑-主教","order":40,"parentId":23,"scrollX":1404,"scrollY":768}
+{"id":40,"expanded":true,"name":"黑-主教","order":40,"parentId":23,"scrollX":1404,"scrollY":768},
+{"id":41,"expanded":true,"name":"终章","order":41,"parentId":23,"scrollX":1390.2857142857142,"scrollY":3072},
+{"id":42,"expanded":false,"name":"MAP042","order":42,"parentId":41,"scrollX":1390.2857142857142,"scrollY":1350.8571428571427}
 ]
